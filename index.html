@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Yomogi&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <title>シミュレーター</title>
+</head>
+<body>
+    <header class="header">
+        <h1>シミュレーター</h1>
+    </header>
+
+    <section class="wrap">
+        <!-- 二分法 -->
+        <section class="dichotomy">
+            <h3 class="heading-title">二分法</h3>
+            
+            <canvas width="500px" height="300px" class="canvas" id="dichotomyCanvas"></canvas>
+            <div class="dichotomy__input-box">
+                <div id="dichotomyTolerance" class="dichotomy__input-box-tolerance">ε = null</div>
+                <div class="input-box">
+                    <input type="number" placeholder="誤差範囲ε" id="dichotomyInput">
+                    <button onclick="dichotomyInputBtn()">決定</button>
+                </div>
+                <button onclick="dichotomyFrameBtn()">コマ送り</button>
+                <button onclick="dichotomyOutBtn()">自動計算開始</button>
+
+                <div class="dichotomy__input-box-contents">
+                    <h3 class="sub-title">結果</h3>
+                    <p class="nomal-text" id="dichotomyNum">試行回数: </p>
+                    <p class="nomal-text" id="dichotomyVal">近似値: </p>
+                </div>
+            </div>
+        </section>
+        <!-- 二分法 -->
+
+        <!-- ニュートン法 -->
+        <section class="newton">
+            <h3 class="heading-title">ニュートン法</h3>
+
+            <canvas width="500px" height="300px" class="canvas" id="newtonCanvas"></canvas>
+            <div class="newton__input-box">
+                <div id="newtonTolerance" class="newton__input-box-tolerance">ε = null</div>
+                <div class="input-box">
+                    <input type="number" placeholder="誤差範囲ε">
+                    <button>決定</button>
+                </div>
+                <button>コマ送り</button>
+                <button>自動計算開始</button>
+
+                <div class="newton__input-box-contents">
+                    <h3 class="sub-title">結果</h3>
+                </div>
+            </div>
+        </section>
+        <!-- ニュートン法 -->
+    </section>
+
+    <script src="./js//Fn.js"></script>
+    <script src="./js/Graph.js"></script>
+    <script src="./js/dichotomy.js"></script>
+    <script src="./js//Newton.js"></script>
+    <script>
+        const dichotomyCanvas = document.querySelector('#dichotomyCanvas');
+        const newtonCanvas = document.querySelector('#newtonCanvas');
+        
+        /////////////////////////////////////////////////////////
+        const graph1 = new Graph(dichotomyCanvas, 500,300);
+        const graph2 = new Graph(newtonCanvas, 500,300);
+        
+        //グラフの軸を描画
+        graph1.displayAxis();
+        graph2.displayAxis();
+
+        //関数の値取得
+        const valueFn = callFn(1000);
+
+        //数値の作成
+        graph1.displayFn(valueFn);
+        graph2.displayFn(valueFn);
+        /////////////////////////////////////////////////////////
+
+
+        //二分法
+        /////////////////////////////////////////////////////////
+        const dichotomy = new Dichotomy(dichotomyCanvas, 200, 450);
+
+        //ABを描画
+        dichotomy.displayAB();
+        /////////////////////////////////////////////////////////
+        function dichotomyInputBtn() {
+            //二分法 誤差範囲決定ボタン
+            const tg = document.querySelector('#dichotomyInput');
+            const tg2 = document.querySelector('#dichotomyTolerance');
+            const val = tg.value;
+            dichotomy.setTolerance(val);
+            tg2.innerHTML = 'ε = ' + val;
+        }
+        function dichotomyFrameBtn() {
+            //二分法 コマ送りボタン
+            dichotomy.moveAB();
+        }
+        function dichotomyOutBtn() {
+            //二分法 自動計算ボタン
+            let flag = true;
+            while(flag) {
+                dichotomy.moveAB();
+                if(dichotomy.calTolerance()) {
+                    break;
+                }
+            }
+        }
+        /////////////////////////////////////////////////////////
+
+
+        //ニュートン法
+        /////////////////////////////////////////////////////////
+        const newton = new Newton(newtonCanvas, 250);
+    </script>
+</body>
+</html>
